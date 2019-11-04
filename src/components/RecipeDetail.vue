@@ -12,7 +12,7 @@
                     <b-card-body :title="selectedRecipe.name" :sub-title="selectedRecipe.siteName">
                         <b-card-text class="text-left">
                             <star-rating v-if="selectedRecipe.rating" :starStyle="{starWidth: 20, starHeight: 20}" :rating="selectedRecipe.rating"></star-rating>
-                            <a :href="selectedRecipe.url" target="_blank">View Recipe</a>
+                            <a :href="selectedRecipe.url" target="_blank">View Recipe</a><br/>
                             <span v-if="totalTime">Cook Time: {{totalTime}}</span>
                         </b-card-text>
                     </b-card-body>
