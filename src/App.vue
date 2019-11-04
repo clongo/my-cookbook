@@ -1,17 +1,42 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Header />
+    <b-container fluid>
+      <b-row v-if=recipes>
+        <b-col>
+          <RecipeList/>
+        </b-col>
+        <b-col v-if="selectedRecipe">
+          <RecipeDetail />
+        </b-col>
+      </b-row>
+      <b-row v-else>
+        <b-col>
+        <h4>Use the form above to find your favorite recipes.</h4>
+        </b-col>
+      </b-row>
+    </b-container>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Header from '@/components/Header'
+import RecipeList from '@/components/RecipeList'
+import RecipeDetail from '@/components/RecipeDetail'
+import {mapState} from 'vuex'
 
 export default {
   name: 'app',
   components: {
-    HelloWorld
+    RecipeList,
+    Header,
+    RecipeDetail
+  },
+  data() {
+    return {}
+  },
+  computed: {
+    ...mapState(['selectedRecipe', 'recipes']),
   }
 }
 </script>
@@ -23,6 +48,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 80px;
 }
 </style>

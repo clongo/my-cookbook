@@ -1,0 +1,1 @@
+export const GOOGLE_BASE_URL = 'https://www.googleapis.com/customsearch/v1?key=AIzaSyCB0xZxSlUdjxzs7cosGU-GAi6DX5SCsHY&cx=011905537146496808315:ld3wpubljmi'
