@@ -37,8 +37,13 @@ const getRecipesFromGoogle = async function(googleSearch) {
                 ratingCount: getPagemapVal(value.pagemap.aggregaterating,"ratingcount"),
                 totalTime: getPagemapVal(value.pagemap.recipe,"totaltime")
             };
-
-            return r;
+            if(r.ratingCount > 0)
+            {
+              //format rating for component
+              r.rating = new Number(r.ratingValue);
+            }
+            if(r.image && r.name)
+              return r;
         });
     }
 

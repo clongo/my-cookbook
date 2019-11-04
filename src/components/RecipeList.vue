@@ -1,6 +1,6 @@
 <template>
     <div class="recipe-list" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="300">
-        <div v-for="recipe in recipes" :key="recipe.url"  data-aos="slide-up" data-aos-offset="100" data-aos-easing="ease-out-back">
+        <div v-for="recipe in recipes" :key="recipe.url" >
             <RecipeListItem :recipe="recipe" />
         </div>
     </div>
