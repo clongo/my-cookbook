@@ -47,7 +47,7 @@ const getRecipesFromGoogle = async function(googleSearch) {
         });
     }
 
-    return {updatedSearch: googleSearch, recipes: recipes};
+    return {updatedSearch: googleSearch, recipes: recipes, totalResults: response.data.searchInformation.formattedTotalResults};
 }
 
 /**

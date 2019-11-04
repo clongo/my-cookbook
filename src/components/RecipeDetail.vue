@@ -1,26 +1,29 @@
 <template>
-    <div class="sticky">
+    <div class="sticky mobile-close">
         <b-card>
             <font-awesome-icon icon="times" @click="close" class="close-btn" />
             <b-row>
-            <b-col md="6">
-                <a :href="selectedRecipe.url" target="_blank">
-                    <b-card-img :src="selectedRecipe.image" class="rounded-4"></b-card-img>
-                </a>
-            </b-col>
-            <b-col md="6">
-                <b-card-body :title="selectedRecipe.name" :sub-title="selectedRecipe.siteName">
-                    <b-card-text class="text-left">
-                        <StarRating v-if="selectedRecipe.rating" :starStyle="{starWidth: 20, starHeight: 20}" :rating="selectedRecipe.rating"/>
-                        <a :href="selectedRecipe.url" target="_blank">View Recipe</a>
-                        <p>
-                            <span v-if="totalTime">Cook Time: {{totalTime}}<br/></span>
-                            <br/>
-                            {{selectedRecipe.description}}
-                        </p>
-                    </b-card-text>
-                </b-card-body>
-            </b-col>
+                <b-col>
+                    <a :href="selectedRecipe.url" target="_blank">
+                        <b-card-img :src="selectedRecipe.image" class="rounded-4 img-fluid"></b-card-img>
+                    </a>
+                </b-col>
+                <b-col>
+                    <b-card-body :title="selectedRecipe.name" :sub-title="selectedRecipe.siteName">
+                        <b-card-text class="text-left">
+                            <star-rating v-if="selectedRecipe.rating" :starStyle="{starWidth: 20, starHeight: 20}" :rating="selectedRecipe.rating"></star-rating>
+                            <a :href="selectedRecipe.url" target="_blank">View Recipe</a>
+                            <span v-if="totalTime">Cook Time: {{totalTime}}</span>
+                        </b-card-text>
+                    </b-card-body>
+                </b-col>
+            </b-row>
+            <b-row>
+                <b-col>
+                    <p class="text-left">
+                        {{selectedRecipe.description.trim()}}
+                    </p>
+                </b-col>
             </b-row>
         </b-card>
     </div>
@@ -28,8 +31,7 @@
 
 <script>
 import {mapState, mapActions} from 'vuex'
-import {isValid,   toFragments} from 'pomeranian-durations'
-import StarRating from 'vue-dynamic-star-rating'
+import {isValid, toFragments} from 'pomeranian-durations'
 export default {
     name: 'RecipeDetail',
     methods: {
@@ -38,9 +40,6 @@ export default {
         {
           this.selectRecipeAction(undefined);
         }
-    },
-    components: {
-      StarRating
     },
     computed: {
         ...mapState(['selectedRecipe']),
@@ -76,7 +75,7 @@ export default {
     }
 
     .card {
-        max-height: 100vh;
+        max-height: 600px;
         overflow: auto;
     }
 

@@ -1,8 +1,12 @@
 <template>
 <b-navbar variant="info" type="dark" toggleable="lg" fixed="top">
-    <b-navbar-brand>My Cookbook</b-navbar-brand>
-        <input size="md" class="form-control mr-2" placeholder="Search" v-model="search" @keydown.enter="doSearch"/>
-        <b-button size="md" class="my-2" @click="doSearch">Search</b-button>
+    <b-input-group>
+        <b-navbar-brand>My Cookbook</b-navbar-brand>
+        <b-form-input placeholder="Search" v-model="search" @keydown.enter="doSearch"></b-form-input>
+        <b-input-group-append>
+            <b-button @click="doSearch" variant="secondary">Search</b-button>
+        </b-input-group-append>
+    </b-input-group>
 </b-navbar>
 </template>
 
@@ -24,3 +28,9 @@ export default {
     }
 }
 </script>
+<style scoped>
+    .input-group input.form-control {
+        border-radius: 0.25rem 0 0 0.25rem;
+        top: 1px;
+    }
+</style>

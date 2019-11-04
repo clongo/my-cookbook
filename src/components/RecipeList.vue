@@ -1,5 +1,6 @@
 <template>
-    <div class="recipe-list" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="300">
+    <div class="recipe-list text-left" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="300">
+        <span class="text-black-50">About {{resultTotal}} results</span>
         <div v-for="recipe in recipes" :key="recipe.url" >
             <RecipeListItem :recipe="recipe" />
         </div>
@@ -25,7 +26,7 @@ export default {
         }
     },
     computed: {
-        ...mapState(['recipes']),
+        ...mapState(['recipes', 'resultTotal']),
     }
 }
 </script>

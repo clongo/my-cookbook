@@ -7,7 +7,7 @@
           <b-card-body>
             <b-card-title class="text-left">{{formattedName}}</b-card-title>
             <b-card-text class="text-left small recipe-desc">
-              <StarRating v-if="recipe.rating" :starStyle="{starWidth: 20, starHeight: 20}" :rating="recipe.rating"/>
+              <star-rating v-if="recipe.rating" :starStyle="{starWidth: 20, starHeight: 20}" :rating="recipe.rating"></star-rating>
               {{recipe.description}}
             </b-card-text>
           </b-card-body>
@@ -18,14 +18,10 @@
 
 <script>
 import {mapActions} from 'vuex'
-import StarRating from 'vue-dynamic-star-rating'
 export default {
     name: "RecipeListItem",
     props: {
         recipe: Object
-    },
-    components: {
-      StarRating
     },
     data() {
         return {

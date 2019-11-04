@@ -4,7 +4,8 @@ import {
   SELECT_RECIPE,
   CLEAR_RECIPES,
   UPDATE_SEARCH,
-  ADD_RECIPE
+  UPDATE_RESULT_TOTAL,
+  ADD_RECIPE,
 } from './mutation-types'
 
 import {dataService} from '@/shared'
@@ -13,6 +14,7 @@ Vue.use(Vuex)
 
 const state = {
   selectedRecipe: undefined,
+  resultTotal: "",
   recipes: [],
   googleSearch: {
     searchTerms: "",
@@ -38,6 +40,10 @@ const mutations = {
   [UPDATE_SEARCH](state, search)
   {
     state.googleSearch = search;
+  },
+  [UPDATE_RESULT_TOTAL](state, totalResults)
+  {
+    state.resultTotal = totalResults;
   }
 };
 
@@ -63,7 +69,12 @@ const actions = {
     //else, current google state is set up for next page
 
     //do google search
-    const {updatedSearch, recipes} = await dataService.getRecipesFromGoogle(newSearch);
+    const {updatedSearch, recipes, totalResults} = await dataService.getRecipesFromGoogle(newSearch);
+
+    if(searchTerm)
+    {
+      commit(UPDATE_RESULT_TOTAL, totalResults);
+    }
 
     //update state of google search params
     commit(UPDATE_SEARCH, updatedSearch);

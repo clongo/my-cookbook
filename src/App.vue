@@ -2,11 +2,11 @@
   <div id="app">
     <Header />
     <b-container fluid>
-      <b-row v-if=recipes>
+      <b-row v-if=hasResults>
         <b-col>
           <RecipeList/>
         </b-col>
-        <b-col v-if="selectedRecipe">
+        <b-col v-if="selectedRecipe" class="mobile-overlay mobile-close" @click="closeMobileOverlay">
           <RecipeDetail />
         </b-col>
       </b-row>
@@ -23,7 +23,7 @@
 import Header from '@/components/Header'
 import RecipeList from '@/components/RecipeList'
 import RecipeDetail from '@/components/RecipeDetail'
-import {mapState} from 'vuex'
+import {mapState, mapActions} from 'vuex'
 
 export default {
   name: 'app',
@@ -37,6 +37,18 @@ export default {
   },
   computed: {
     ...mapState(['selectedRecipe', 'recipes']),
+    hasResults: function()
+    {
+      return this.recipes.length > 0;
+    }
+  },
+  methods: {
+    ...mapActions(['selectRecipeAction']),
+    closeMobileOverlay: function(e)
+    {
+      if(window.innerWidth < 945 && e.target.classList.contains('mobile-close'))
+        this.selectRecipeAction(undefined);
+    }
   }
 }
 </script>
@@ -49,5 +61,18 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 80px;
+}
+@media only screen and (max-width: 945px) {
+  .mobile-overlay.col {
+    position: fixed;
+    top: 0;
+    height: 100%;
+    background: rgb(0,0,0,0.6);
+    z-index: 1200;
+  }
+
+  .mobile-overlay.col .sticky .card {
+    position: relative;
+  }
 }
 </style>
