@@ -45,24 +45,43 @@ const getRecipesFromGoogle = async function(googleSearch) {
     return {updatedSearch: googleSearch, recipes: recipes, totalResults: response.data.searchInformation.formattedTotalResults};
 }
 
+/**
+ * Get the users saved recipes from the API
+ * @param {Object} googleUser The currently logged in google user
+ */
 const getSavedRecipes = async function(googleUser)
 {
   const response = await axios.get(COOKBOOK_API_URL + '/api/Recipes', {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}});
   return response;
 }
 
+/**
+ * Save a recipe to the favorites of the current user
+ * @param {Object} googleUser The currently logged in google user
+ * @param {Object} recipe The recipe to save to the users favorites
+ */
 const addSavedRecipe = async function(googleUser, recipe)
 {
   const response = await axios.put(COOKBOOK_API_URL + '/api/Recipes', recipe, {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}});
   return response;
 }
 
+/**
+ * Updates the saved recipe. Used when google data is downloaded that matches the saved url.
+ * @param {Object} googleUser The currently logged in google user
+ * @param {Object} recipe The recipe to update
+ */
 const updateSavedRecipe = async function(googleUser, recipe)
 {
   const response = await axios.post(COOKBOOK_API_URL + '/api/Recipes', recipe, {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}});
   return response;
 }
 
+/**
+ * Removes a recipe from the favorites of the current user
+ * @param {Object} googleUser The currently logged in user
+ * @param {Object} recipe The recipe to remove from the users favorites
+ */
 const deleteSavedRecipe = async function(googleUser, recipe)
 {
   const response = await axios.delete(COOKBOOK_API_URL + `/api/Recipes?url=${recipe.url}`, {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}});
