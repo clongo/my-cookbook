@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {GOOGLE_BASE_URL} from './config'
+import {GOOGLE_BASE_URL, COOKBOOK_API_URL} from './config'
 
 /**
  * Get Recipes from Google with the given search parameters
@@ -50,6 +50,30 @@ const getRecipesFromGoogle = async function(googleSearch) {
     return {updatedSearch: googleSearch, recipes: recipes, totalResults: response.data.searchInformation.formattedTotalResults};
 }
 
+const getSavedRecipes = async function(googleUser)
+{
+  const response = await axios.get(COOKBOOK_API_URL + '/api/Recipes', {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}});
+  return response;
+}
+
+const addSavedRecipe = async function(googleUser, recipe)
+{
+  const response = await axios.put(COOKBOOK_API_URL + '/api/Recipes', recipe, {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}});
+  return response;
+}
+
+const updateSavedRecipe = async function(googleUser, recipe)
+{
+  const response = await axios.post(COOKBOOK_API_URL + '/api/Recipes', recipe, {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}});
+  return response;
+}
+
+const deleteSavedRecipes = async function(googleUser, recipe)
+{
+  const response = await axios.delete(COOKBOOK_API_URL + '/api/Recipes', recipe, {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}});
+  return response;
+}
+
 /**
  * Safely get the requested child property value from an Array of objects
  * @param {Array} objArray 
@@ -69,5 +93,9 @@ const getPagemapVal = function(objArray, childProp) {
   }
 
 export const dataService = {
-    getRecipesFromGoogle
+    getRecipesFromGoogle,
+    getSavedRecipes,
+    addSavedRecipe,
+    updateSavedRecipe,
+    deleteSavedRecipes
 };

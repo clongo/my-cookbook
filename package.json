@@ -21,6 +21,7 @@
     "vue": "^2.6.10",
     "vue-axios": "^2.1.5",
     "vue-dynamic-star-rating": "^1.0.8",
+    "vue-google-oauth2": "^1.4.0",
     "vue-infinite-scroll": "^2.0.2",
     "vuex": "^3.0.1"
   },

@@ -6,6 +6,7 @@ import {
   UPDATE_SEARCH,
   UPDATE_RESULT_TOTAL,
   ADD_RECIPE,
+  SET_USER
 } from './mutation-types'
 
 import {dataService} from '@/shared'
@@ -21,7 +22,8 @@ const state = {
     count: 10,
     startIndex: 1,
     hasNextPage: false
-  }
+  },
+  googleUser: undefined
 };
 
 const mutations = {
@@ -44,6 +46,10 @@ const mutations = {
   [UPDATE_RESULT_TOTAL](state, totalResults)
   {
     state.resultTotal = totalResults;
+  },
+  [SET_USER](state, googleUser)
+  {
+    state.googleUser = googleUser;
   }
 };
 
@@ -84,6 +90,17 @@ const actions = {
       if(state.recipes.find(function(value){return value.url === r.url}) === undefined)
         commit(ADD_RECIPE, r);
     })
+  },
+  async setSignedInUserAction({commit}, googleUser)
+  {
+    //save the google user
+    commit(SET_USER, googleUser);
+  },
+  async getUserRecipes({commit, state})
+  {
+    const response = await dataService.getSavedRecipes(state.googleUser);
+    response == response;
+    commit == commit;
   }
 };
 

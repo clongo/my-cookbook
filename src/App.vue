@@ -33,7 +33,8 @@ export default {
     RecipeDetail
   },
   data() {
-    return {}
+    return {
+    }
   },
   computed: {
     ...mapState(['selectedRecipe', 'recipes']),
