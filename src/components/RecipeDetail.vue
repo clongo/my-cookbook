@@ -11,7 +11,7 @@
                 <b-col>
                     <b-card-body :title="selectedRecipe.name" :sub-title="selectedRecipe.siteName">
                         <b-card-text class="text-left">
-                            <star-rating v-if="selectedRecipe.rating" :starStyle="{starWidth: 20, starHeight: 20}" :rating="selectedRecipe.rating"></star-rating>
+                            <star-rating v-if="rating" :starStyle="{starWidth: 20, starHeight: 20}" :rating="rating"></star-rating>
                             <a :href="selectedRecipe.url" target="_blank">View Recipe</a><br/>
                             <span v-if="totalTime">Cook Time: {{totalTime}}</span>
                         </b-card-text>
@@ -25,15 +25,20 @@
                     </p>
                 </b-col>
             </b-row>
+            <Favorite :recipe="selectedRecipe"/>
         </b-card>
     </div>
 </template>
 
 <script>
+import Favorite from '@/components/Favorite'
 import {mapState, mapActions} from 'vuex'
 import {isValid, toFragments} from 'pomeranian-durations'
 export default {
     name: 'RecipeDetail',
+    components: {
+      Favorite
+    },
     methods: {
         ...mapActions(['selectRecipeAction']),
         close: function()
@@ -60,6 +65,15 @@ export default {
                 return formated.trim();
             }
             return undefined
+        },
+        rating: function()
+        {
+            if(this.selectedRecipe.ratingCount > 0)
+            {
+                //format rating for component
+                return new Number(this.selectedRecipe.ratingValue);
+            }
+                return undefined;
         }
     }
 }

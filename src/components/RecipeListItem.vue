@@ -7,9 +7,10 @@
           <b-card-body>
             <b-card-title class="text-left">{{formattedName}}</b-card-title>
             <b-card-text class="text-left small recipe-desc">
-              <star-rating v-if="recipe.rating" :starStyle="{starWidth: 20, starHeight: 20}" :rating="recipe.rating"></star-rating>
+              <star-rating v-if="rating" :starStyle="{starWidth: 20, starHeight: 20}" :rating="rating"></star-rating>
               {{recipe.description}}
             </b-card-text>
+            <Favorite :recipe="recipe"/>
           </b-card-body>
         </b-col>
       </b-row>
@@ -17,16 +18,18 @@
 </template>
 
 <script>
+import Favorite from '@/components/Favorite'
 import {mapActions} from 'vuex'
 export default {
     name: "RecipeListItem",
+    components: {
+      Favorite
+    },
     props: {
         recipe: Object
     },
     data() {
-        return {
-            
-        }
+        return {}
     },
     methods: {
         ...mapActions(['selectRecipeAction']),
@@ -41,6 +44,15 @@ export default {
         if(this.recipe.siteName)
         return this.recipe.name + ' - ' + this.recipe.siteName;
         return this.recipe.name
+      },
+      rating: function()
+      {
+        if(this.recipe.ratingCount > 0)
+        {
+          //format rating for component
+          return new Number(this.recipe.ratingValue);
+        }
+        return undefined;
       }
     }
 }

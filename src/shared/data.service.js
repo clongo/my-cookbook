@@ -37,11 +37,6 @@ const getRecipesFromGoogle = async function(googleSearch) {
                 ratingCount: getPagemapVal(value.pagemap.aggregaterating,"ratingcount"),
                 totalTime: getPagemapVal(value.pagemap.recipe,"totaltime")
             };
-            if(r.ratingCount > 0)
-            {
-              //format rating for component
-              r.rating = new Number(r.ratingValue);
-            }
             if(r.image && r.name)
               return r;
         });
@@ -68,9 +63,9 @@ const updateSavedRecipe = async function(googleUser, recipe)
   return response;
 }
 
-const deleteSavedRecipes = async function(googleUser, recipe)
+const deleteSavedRecipe = async function(googleUser, recipe)
 {
-  const response = await axios.delete(COOKBOOK_API_URL + '/api/Recipes', recipe, {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}});
+  const response = await axios.delete(COOKBOOK_API_URL + `/api/Recipes?url=${recipe.url}`, {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}});
   return response;
 }
 
@@ -97,5 +92,5 @@ export const dataService = {
     getSavedRecipes,
     addSavedRecipe,
     updateSavedRecipe,
-    deleteSavedRecipes
+    deleteSavedRecipe
 };

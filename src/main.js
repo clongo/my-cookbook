@@ -4,7 +4,7 @@ import BootstrapVue from 'bootstrap-vue'
 import infiniteScroll from 'vue-infinite-scroll'
 import StarRating from 'vue-dynamic-star-rating'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faTimes, faHeart } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import GAuth from 'vue-google-oauth2'
 
@@ -16,6 +16,7 @@ const gauthOption = {
 Vue.use(GAuth, gauthOption)
 
 library.add(faTimes)
+library.add(faHeart)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 Vue.component('star-rating', StarRating);
 

@@ -12,7 +12,7 @@
       </b-row>
       <b-row v-else>
         <b-col>
-        <h4>Use the form above to find your favorite recipes.</h4>
+        <h4>Use the form above to find your favorite recipes. Login with google to view your saved recipes.</h4>
         </b-col>
       </b-row>
     </b-container>

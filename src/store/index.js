@@ -6,7 +6,8 @@ import {
   UPDATE_SEARCH,
   UPDATE_RESULT_TOTAL,
   ADD_RECIPE,
-  SET_USER
+  SET_USER,
+  SET_RECIPE_FAVORITE
 } from './mutation-types'
 
 import {dataService} from '@/shared'
@@ -50,6 +51,17 @@ const mutations = {
   [SET_USER](state, googleUser)
   {
     state.googleUser = googleUser;
+  },
+  [SET_RECIPE_FAVORITE](state, args)
+  {
+    for(var i = 0; i < state.recipes.length; i++)
+    {
+      if(state.recipes[i].url === args.url){
+        //use vue set to trigger the components to update in the details and the list
+        Vue.set(state.recipes[i], 'favorite', args.favorite);
+        return;
+      }
+    }
   }
 };
 
@@ -101,6 +113,17 @@ const actions = {
     const response = await dataService.getSavedRecipes(state.googleUser);
     response == response;
     commit == commit;
+  },
+  async setRecipeFavorite({commit, state}, args)
+  {
+    commit(SET_RECIPE_FAVORITE, args);
+    let response;
+    const recipe = state.recipes.find(function(value){return value.url === args.url});
+    if(args.favorite)
+      response = await dataService.addSavedRecipe(state.googleUser, recipe);
+    else
+      response = await dataService.deleteSavedRecipe(state.googleUser, recipe);
+    return response;
   }
 };
 
