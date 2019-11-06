@@ -47,10 +47,12 @@ export default {
       },
       rating: function()
       {
-        if(this.recipe.ratingCount > 0)
+        if(this.recipe.ratingValue > 0)
         {
           //format rating for component
-          return new Number(this.recipe.ratingValue);
+          let rating = new Number(this.recipe.ratingValue);
+          rating = Math.round(10*rating)/10.0; //ropund to the nearest tenth
+          return rating;
         }
         return undefined;
       }

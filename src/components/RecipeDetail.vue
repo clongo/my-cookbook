@@ -11,14 +11,14 @@
                 <b-col>
                     <b-card-body :title="selectedRecipe.name" :sub-title="selectedRecipe.siteName">
                         <b-card-text class="text-left">
-                            <star-rating v-if="rating" :starStyle="{starWidth: 20, starHeight: 20}" :rating="rating"></star-rating>
+                            <star-rating v-if="rating" :starStyle="{starWidth: 20, starHeight: 20}" :rating="rating" :key="rating"></star-rating>
                             <a :href="selectedRecipe.url" target="_blank">View Recipe</a><br/>
                             <span v-if="totalTime">Cook Time: {{totalTime}}</span>
                         </b-card-text>
                     </b-card-body>
                 </b-col>
             </b-row>
-            <b-row>
+            <b-row v-if="selectedRecipe.description">
                 <b-col>
                     <p class="text-left">
                         {{selectedRecipe.description.trim()}}
@@ -68,12 +68,14 @@ export default {
         },
         rating: function()
         {
-            if(this.selectedRecipe.ratingCount > 0)
+            if(this.selectedRecipe.ratingValue > 0)
             {
                 //format rating for component
-                return new Number(this.selectedRecipe.ratingValue);
+                let rating = new Number(this.selectedRecipe.ratingValue);
+                rating = Math.round(10*rating)/10.0; //ropund to the nearest tenth
+                return rating;
             }
-                return undefined;
+            return undefined;
         }
     }
 }

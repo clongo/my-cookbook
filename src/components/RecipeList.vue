@@ -1,6 +1,7 @@
 <template>
     <div class="recipe-list text-left" v-infinite-scroll="loadMore" infinite-scroll-disabled="busy" infinite-scroll-distance="300">
-        <span class="text-black-50">About {{resultTotal}} results</span>
+        <span v-if="!myRecipes" class="text-black-50">About {{resultTotal}} results</span>
+        <MyRecipes v-else/>
         <div v-for="recipe in recipes" :key="recipe.url" >
             <RecipeListItem :recipe="recipe" />
         </div>
@@ -9,11 +10,12 @@
 
 <script>
 import RecipeListItem from '@/components/RecipeListItem'
+import MyRecipes from '@/components/MyRecipes'
 import {mapState,mapActions} from 'vuex'
 
 export default {
     name: "recipeList",
-    components: { RecipeListItem },
+    components: { RecipeListItem, MyRecipes },
     data() {
       return {busy: false}
     },
@@ -26,7 +28,7 @@ export default {
         }
     },
     computed: {
-        ...mapState(['recipes', 'resultTotal']),
+        ...mapState(['recipes', 'resultTotal', 'myRecipes']),
     }
 }
 </script>

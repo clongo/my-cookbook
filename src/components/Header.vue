@@ -9,17 +9,24 @@
         <b-button 
         @click="handleClickSignIn"
         v-if="!isSignIn"
-        class="signin-link">Login</b-button>
-        <b-button 
-        @click="handleClickSignOut"
-        v-if="isSignIn"
-        class="signin-link">Logout</b-button>
+        class="signin-link">Sign In</b-button>
+
+            <b-nav-item-dropdown right class="profile-link"
+            v-if="isSignIn">
+                <!-- Using 'button-content' slot -->
+                <template v-slot:button-content class="profile-image-wrapper">
+                    <img :src="userImage" />
+                </template>
+                <b-dropdown-item @click="getUserRecipes">My Recipes</b-dropdown-item>
+                <b-dropdown-item @click="handleClickSignOut">Sign Out</b-dropdown-item>
+            </b-nav-item-dropdown>
     </b-input-group>
+
 </b-navbar>
 </template>
 
 <script>
-import {mapActions} from 'vuex'
+import {mapState, mapActions} from 'vuex'
 export default {
     name: "Header",
     data() {
@@ -27,6 +34,13 @@ export default {
             search: "",
             isInit: false,
             isSignIn: false
+        }
+    },
+    computed: {
+        ...mapState(['googleUser']),
+        userImage: function()
+        {
+           return this.googleUser.getBasicProfile().getImageUrl();
         }
     },
     methods: {
@@ -104,5 +118,24 @@ export default {
         border: 0;
         box-shadow: none;
         -webkit-box-shadow: none;
+    }
+</style>
+<style>
+    /* Style the profile button */
+    .profile-link > a {
+        width: 60px;
+    }
+    .profile-link > a img {
+        width: 38px;
+        position: absolute;
+        top: 0;
+        left: 10px;
+        border-radius: 100%;
+    }
+    .nav-link.dropdown-toggle:after {
+        position: absolute;
+        margin: 0;
+        right: 0;
+        top: 50%
     }
 </style>
