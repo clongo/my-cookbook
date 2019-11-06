@@ -89,6 +89,12 @@ const mutations = {
 };
 
 const actions = {
+  /**
+   * Select a recipe and show it's detail to the user.
+   * Called from RecipeListItem when item is clicked
+   * @param {Object} param0 Vuex helpers
+   * @param {Object} recipe The recipe selected from the list
+   */
   async selectRecipeAction({commit, dispatch}, recipe)
   {
     commit(SELECT_RECIPE, recipe);
@@ -99,6 +105,12 @@ const actions = {
       await dispatch("updateSavedRecipeFromUrl", recipe.url);
     }
   },
+  /**
+   * Do a search in google and saved recipes. If no searchTerm is supplied, load recipes from the next page in google results.
+   * Called when user searches in the Header or page is scrolled to bottom, triggering the next page load
+   * @param {Object} param0 Vuex helpers
+   * @param {string} searchTerm Search terms to search with
+   */
   async searchRecipes({commit, state, dispatch}, searchTerm = undefined)
   {
     //do not search if no term or next page
@@ -148,13 +160,20 @@ const actions = {
       }
     });
   },
+  /**
+   * Sets the signed in the state
+   * @param {Object} param0 Vuex helpers
+   * @param {Object} googleUser The google user object
+   */
   async setSignedInUserAction({commit}, googleUser)
   {
     //save the google user
     commit(SET_USER, googleUser);
   },
   /**
+   * Loads all the recipes for the logged in user
    * Called when user is first logged in or clicks My Recipes link
+   * @param {Object} param0 Vuex helpers
    */
   async getUserRecipes({commit, state})
   {
@@ -185,7 +204,10 @@ const actions = {
       });
   },
   /**
+   * Searches user saved recipes for matches to search
    * Called when user is searching google to include their saved recipes at the top
+   * @param {Object} param0 Vuex helpers
+   * @param {string} searchTerms Search terms to search with
    */
   async searchUserRecipes({commit, state}, searchTerms)
   {
@@ -200,9 +222,10 @@ const actions = {
       });
   },
   /**
-   * Called when user clicks favorite icon. Togggles saving/removing recipe from user cookbook
-   * @param {*} param0 
-   * @param {Object} args contains the url of the recipe and the the flag for favorite
+   * Togggles saving/removing recipe from user cookbook.
+   * Called when user clicks favorite icon. 
+   * @param {Object} param0 Vuex helpers
+   * @param {Object} recipe The recipe to toggle favorite and save
    */
   async toggleRecipeFavorite({commit, state}, recipe)
   {
@@ -213,6 +236,7 @@ const actions = {
     {
       response = await dataService.deleteSavedRecipe(state.googleUser, recipe);
       
+      //remove recipe from list if on my recipes "page"
       if(state.myRecipes && response.status === 200)
       {
         commit(REMOVE_RECIPE, recipe)
@@ -223,8 +247,9 @@ const actions = {
   },
   /**
    * Adds the recipe url to the saved recipes
-   * @param {*} param0 
-   * @param {string} url The url of teh recipe to add
+   * Called from Modal when user adds a recipe Url
+   * @param {Object} param0 Vuex helpers
+   * @param {string} url The url of the recipe to add
    */
   async addRecipeFromUrl({commit, state, dispatch}, url)
   {
@@ -235,18 +260,27 @@ const actions = {
       //imediately run update logic for new recipe
       await dispatch("updateSavedRecipeFromUrl", url);
   },
-
-  async updateSavedRecipeFromUrl({commit, state}, url)
+  /**
+   * Gets recipe data from Google using the url and updates it in the Users Saved Recipes
+   * This keeps saved recipes up to date with google
+   * Called when user Adds recipe from Url or User clicks saved recipe from the list.
+   * @param {Object} param0 Vuex helpers
+   * @param {string} url The Url to load recipe data from google
+   */
+  async updateSavedRecipeFromUrl({dispatch}, url)
   {
     //search google by recipe
     const recipe = await dataService.getRecipeFromGoogle(url);
-    //commmit recipe to list of recipes in state
-    commit(UPDATE_RECIPE, {url: url, recipe: recipe});
-    commit(SET_RECIPE_FAVORITE, {url: recipe.url, favorite: true});
-    //send recipe to API as POST
-    await dataService.updateSavedRecipe(state.googleUser, url, recipe);
-  },
 
+    await dispatch("updateSavedRecipeData", recipe);
+  },
+  /**
+   * Updates the Users Saved Recipe with the google recipe data
+   * This keeps saved recipes up to date with google
+   * Called when Google search contains recipe that is saved for a user
+   * @param {Object} param0 Vuex helpers
+   * @param {Object} recipe The recipe data from google
+   */
   async updateSavedRecipeData({commit, state}, recipe)
   {
     //commmit recipe to list of recipes in state
@@ -258,7 +292,7 @@ const actions = {
 };
 
 const getters = {
-  getRecipeByUrl: state => url => state.recipe.find(r => r.url === url)
+  
 };
 
 export default new Vuex.Store({

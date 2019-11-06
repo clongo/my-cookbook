@@ -67,7 +67,7 @@ export default {
                     this.isSignIn = this.$gAuth.isAuthorized;
                 })
                 .catch(error => {
-                    error == error;
+                    return error;
                     //on fail do something
                 });
         },
@@ -80,12 +80,13 @@ export default {
                     this.isSignIn = this.$gAuth.isAuthorized;
                 })
                 .catch(error => {
-                    error == error;
+                    return error;
                     //on fail do something
                 });
         }
     },
     created() {
+        //when the Header is created, check for prviously logged in user
         let that = this;
         let checkGauthLoad = setInterval(function() {
         that.isInit = that.$gAuth.isInit;

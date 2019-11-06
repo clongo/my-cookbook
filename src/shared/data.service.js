@@ -14,7 +14,7 @@ const getRecipesFromGoogle = async function(googleSearch) {
     
     if(response.status === 200)
     {
-      //check parse response for next page and save data
+      //check and parse response for next page and save data
       if(response.data.queries.nextPage)
       {
           googleSearch.hasNextPage = true;

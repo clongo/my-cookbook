@@ -50,6 +50,7 @@ export default {
         ...mapState(['selectedRecipe']),
         totalTime: function()
         {
+            //format ISO 8601 durations
             if(isValid(this.selectedRecipe.totalTime))
             {
                 let time = toFragments(this.selectedRecipe.totalTime);
@@ -64,6 +65,8 @@ export default {
                     formated += minutes + ' minutes'
                 return formated.trim();
             }
+
+            //display time as is
             return this.selectedRecipe.totalTime
         },
         rating: function()

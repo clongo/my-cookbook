@@ -8,6 +8,7 @@ import { faTimes, faHeart } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import GAuth from 'vue-google-oauth2'
 
+//Google Authentication Config
 const gauthOption = {
   clientId: '677206663963-5i6kf5v2s8f2i3tlle9r0hq0sppnuprf.apps.googleusercontent.com',
   fetch_basic_profile: true,
