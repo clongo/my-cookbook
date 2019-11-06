@@ -90,7 +90,7 @@ export default {
 
     .sticky > * {
         position: sticky;
-        top: 80px;
+        top: 100px;
     }
 
     .card {
