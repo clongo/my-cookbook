@@ -64,7 +64,7 @@ export default {
                     formated += minutes + ' minutes'
                 return formated.trim();
             }
-            return undefined
+            return this.selectedRecipe.totalTime
         },
         rating: function()
         {

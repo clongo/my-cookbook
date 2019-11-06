@@ -89,9 +89,15 @@ const mutations = {
 };
 
 const actions = {
-  selectRecipeAction({commit}, recipe)
+  async selectRecipeAction({commit, dispatch}, recipe)
   {
     commit(SELECT_RECIPE, recipe);
+
+    //update recipe data from google if the recipe is saved
+    if(recipe.favorite)
+    {
+      await dispatch("updateSavedRecipe", recipe.url);
+    }
   },
   async searchRecipes({commit, state}, searchTerm = undefined)
   {
