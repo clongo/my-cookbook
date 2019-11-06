@@ -179,22 +179,23 @@ const actions = {
   {
     const response = await dataService.getSavedRecipes(state.googleUser);
 
-    //Show My Recipe controls
-    commit(SET_MY_RECIPES, true);
-    //keep any search terms, but dont let the page load results when list is scrolled
-    const newSearch = {...state.googleSearch};
-    newSearch.hasNextPage = false;
-    commit(UPDATE_SEARCH, newSearch);
-    
-    //Show My Cookbook title by removing result total
-    commit(UPDATE_RESULT_TOTAL, undefined);
-
-    //clear any search results
-    commit(CLEAR_RECIPES);
-    commit(SELECT_RECIPE, undefined);
-
     //add recipes with unique urls
-    if(response.status === 200)
+    if(response && response.status === 200)
+    {
+      //Show My Recipe controls
+      commit(SET_MY_RECIPES, true);
+      //keep any search terms, but dont let the page load results when list is scrolled
+      const newSearch = {...state.googleSearch};
+      newSearch.hasNextPage = false;
+      commit(UPDATE_SEARCH, newSearch);
+      
+      //Show My Cookbook title by removing result total
+      commit(UPDATE_RESULT_TOTAL, undefined);
+
+      //clear any search results
+      commit(CLEAR_RECIPES);
+      commit(SELECT_RECIPE, undefined);
+
       response.data.map(r => {
         if(r!= undefined && state.recipes.find(function(value){return value.url === r.url}) === undefined)
         {
@@ -202,6 +203,10 @@ const actions = {
           commit(ADD_RECIPE, r);
         }
       });
+    }
+    else {
+      //API server error. TODO show error message to user
+    }
   },
   /**
    * Searches user saved recipes for matches to search
@@ -214,12 +219,17 @@ const actions = {
     const response = await dataService.searchSavedRecipes(state.googleUser, searchTerms);
 
     //add recipes with unique urls
-    if(response.status === 200)
+    if(response && response.status === 200)
+    {
       response.data.map(r => {
         r.favorite = true;
         if(state.recipes.find(function(value){return value.url === r.url}) === undefined)
           commit(ADD_RECIPE, r);
       });
+    }
+    else {
+      //API server error. TODO show error message to user
+    }
   },
   /**
    * Togggles saving/removing recipe from user cookbook.
@@ -237,12 +247,12 @@ const actions = {
       response = await dataService.deleteSavedRecipe(state.googleUser, recipe);
       
       //remove recipe from list if on my recipes "page"
-      if(state.myRecipes && response.status === 200)
+      if(state.myRecipes && response && response.status === 200)
       {
         commit(REMOVE_RECIPE, recipe)
       }
     }
-    if(response.status === 200)
+    if(response && response.status === 200)
       commit(SET_RECIPE_FAVORITE, {url: recipe.url, favorite: !recipe.favorite});
   },
   /**
@@ -255,10 +265,16 @@ const actions = {
   {
       const recipe = { url: url, favorite: true};
       commit(ADD_RECIPE, recipe);
-      await dataService.addSavedRecipe(state.googleUser, recipe);
+      const response = await dataService.addSavedRecipe(state.googleUser, recipe);
 
-      //imediately run update logic for new recipe
-      await dispatch("updateSavedRecipeFromUrl", url);
+      if(response && response.status === 200)
+      {
+        //imediately run update logic for new recipe
+        await dispatch("updateSavedRecipeFromUrl", url);
+      }
+      else {
+        //API server error. TODO show error message to user
+      }
   },
   /**
    * Gets recipe data from Google using the url and updates it in the Users Saved Recipes
@@ -283,11 +299,18 @@ const actions = {
    */
   async updateSavedRecipeData({commit, state}, recipe)
   {
-    //commmit recipe to list of recipes in state
-    commit(UPDATE_RECIPE, {url: recipe.url, recipe: recipe});
-    commit(SET_RECIPE_FAVORITE, {url: recipe.url, favorite: true});
     //send recipe to API as POST
-    await dataService.updateSavedRecipe(state.googleUser, recipe.url, recipe);
+    const response = await dataService.updateSavedRecipe(state.googleUser, recipe.url, recipe);
+    
+    if(response && response.status === 200)
+    {
+      //commmit recipe to list of recipes in state
+      commit(UPDATE_RECIPE, {url: recipe.url, recipe: recipe});
+      commit(SET_RECIPE_FAVORITE, {url: recipe.url, favorite: true});
+    }
+    else {
+      //API server error. TODO show error message to user
+    }
   }
 };
 

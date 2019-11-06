@@ -12,7 +12,7 @@ const getRecipesFromGoogle = async function(googleSearch) {
       return err.response;
     });
     
-    if(response.status === 200)
+    if(response && response.status === 200)
     {
       //check and parse response for next page and save data
       if(response.data.queries.nextPage)
@@ -60,7 +60,7 @@ const getRecipeFromGoogle = async function(url) {
     });
 
     let recipes = [];
-    if(response.data.items)
+    if(response && response.data.items)
     {
         //parse the recipe data
         recipes = response.data.items.map(value => {
