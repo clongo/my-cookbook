@@ -7,33 +7,45 @@ import {GOOGLE_BASE_URL, COOKBOOK_API_URL} from './config'
  */
 const getRecipesFromGoogle = async function(googleSearch) {
     //call google api
-    const response = await axios.get(`${GOOGLE_BASE_URL}&q=${googleSearch.searchTerms}&num=${googleSearch.count}&start=${googleSearch.startIndex}`);
+    const response = await axios.get(`${GOOGLE_BASE_URL}&q=${googleSearch.searchTerms}&num=${googleSearch.count}&start=${googleSearch.startIndex}`).catch((err) => {
+      //must catch for vue to continue execution
+      return err.response;
+    });
     
-    //check parse response for next page and save data
-    if(response.data.queries.nextPage)
+    if(response.status === 200)
     {
-        googleSearch.hasNextPage = true;
-        let nextPage = response.data.queries.nextPage[0];
-        googleSearch.count = nextPage.count;
-        googleSearch.startIndex = nextPage.startIndex;
-    } 
-    else
-    {
-        googleSearch.hasNextPage = false;
+      //check parse response for next page and save data
+      if(response.data.queries.nextPage)
+      {
+          googleSearch.hasNextPage = true;
+          let nextPage = response.data.queries.nextPage[0];
+          googleSearch.count = nextPage.count;
+          googleSearch.startIndex = nextPage.startIndex;
+      } 
+      else
+      {
+          googleSearch.hasNextPage = false;
+      }
+
+      let recipes = [];
+      if(response.data.items)
+      {
+          //parse the recipe data
+          recipes = response.data.items.map(value => {
+              let r = getRecipeData(value);
+              if(r.image && r.name)
+                return r;
+          });
+      }
+
+      return {updatedSearch: googleSearch, recipes: recipes, totalResults: response.data.searchInformation.formattedTotalResults};
     }
 
-    let recipes = [];
-    if(response.data.items)
-    {
-        //parse the recipe data
-        recipes = response.data.items.map(value => {
-            let r = getRecipeData(value);
-            if(r.image && r.name)
-              return r;
-        });
+    else {
+      //request failed
+      googleSearch.hasNextPage = false;
+      return {updatedSearch: googleSearch, recipes: [], totalResults: undefined};
     }
-
-    return {updatedSearch: googleSearch, recipes: recipes, totalResults: response.data.searchInformation.formattedTotalResults};
 }
 
 /**
@@ -42,7 +54,10 @@ const getRecipesFromGoogle = async function(googleSearch) {
  */
 const getRecipeFromGoogle = async function(url) {
     //call google api
-    const response = await axios.get(`${GOOGLE_BASE_URL}&q=${url}&siteSearch=${url}`);
+    const response = await axios.get(`${GOOGLE_BASE_URL}&q=${url}&siteSearch=${url}`).catch((err) => {
+      //must catch for vue to continue execution
+      return err.response;
+    });
 
     let recipes = [];
     if(response.data.items)
@@ -62,7 +77,10 @@ const getRecipeFromGoogle = async function(url) {
  */
 const getSavedRecipes = async function(googleUser)
 {
-  const response = await axios.get(COOKBOOK_API_URL + '/api/Recipes', {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}});
+  const response = await axios.get(COOKBOOK_API_URL + '/api/Recipes', {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}}).catch((err) => {
+    //must catch for vue to continue execution
+    return err.response;
+  });
   return response;
 }
 
@@ -73,7 +91,10 @@ const getSavedRecipes = async function(googleUser)
  */
 const addSavedRecipe = async function(googleUser, recipe)
 {
-  const response = await axios.put(COOKBOOK_API_URL + '/api/Recipes', recipe, {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}});
+  const response = await axios.put(COOKBOOK_API_URL + '/api/Recipes', recipe, {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}}).catch((err) => {
+    //must catch for vue to continue execution
+    return err.response;
+  });
   return response;
 }
 
@@ -84,7 +105,10 @@ const addSavedRecipe = async function(googleUser, recipe)
  */
 const updateSavedRecipe = async function(googleUser, url, recipe)
 {
-  const response = await axios.post(COOKBOOK_API_URL + `/api/Recipes?url=${url}`, recipe, {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}});
+  const response = await axios.post(COOKBOOK_API_URL + `/api/Recipes?url=${url}`, recipe, {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}}).catch((err) => {
+    //must catch for vue to continue execution
+    return err.response;
+  });
   return response;
 }
 
@@ -95,7 +119,24 @@ const updateSavedRecipe = async function(googleUser, url, recipe)
  */
 const deleteSavedRecipe = async function(googleUser, recipe)
 {
-  const response = await axios.delete(COOKBOOK_API_URL + `/api/Recipes?url=${recipe.url}`, {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}});
+  const response = await axios.delete(COOKBOOK_API_URL + `/api/Recipes?url=${recipe.url}`, {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}}).catch((err) => {
+    //must catch for vue to continue execution
+    return err.response;
+  });
+  return response;
+}
+
+/**
+ * Search recipes that user saved using search terms
+ * @param {Object} googleUser The currently logged in user
+ * @param {Object} searchTerms The search to use in user recipes
+ */
+const searchSavedRecipes = async function(googleUser, searchTerms)
+{
+  const response = await axios.get(COOKBOOK_API_URL + `/api/Recipes/Search?searchTerms=${searchTerms}`, {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}}).catch((err) => {
+    //must catch for vue to continue execution
+    return err.response;
+  });
   return response;
 }
 
@@ -141,5 +182,6 @@ export const dataService = {
     getSavedRecipes,
     addSavedRecipe,
     updateSavedRecipe,
-    deleteSavedRecipe
+    deleteSavedRecipe,
+    searchSavedRecipes
 };

@@ -96,10 +96,10 @@ const actions = {
     //update recipe data from google if the recipe is saved
     if(recipe.favorite)
     {
-      await dispatch("updateSavedRecipe", recipe.url);
+      await dispatch("updateSavedRecipeFromUrl", recipe.url);
     }
   },
-  async searchRecipes({commit, state}, searchTerm = undefined)
+  async searchRecipes({commit, state, dispatch}, searchTerm = undefined)
   {
     //do not search if no term or next page
     if(!searchTerm && !state.googleSearch.hasNextPage) return;
@@ -109,7 +109,8 @@ const actions = {
     //setup new googleSearch object so we can update it
     const newSearch = {...state.googleSearch};
 
-    if(searchTerm)
+    //new search will send a search term. otherwise we are getting next page of results
+    if(searchTerm) 
     {
       //start new search from page one
       commit(CLEAR_RECIPES);
@@ -117,13 +118,14 @@ const actions = {
       newSearch.searchTerms = searchTerm;
 
       //todo get recipes from logged in user and add them to the top of the list
+      await dispatch('searchUserRecipes', searchTerm);
     }
     //else, current google state is set up for next page
 
     //do google search
     const {updatedSearch, recipes, totalResults} = await dataService.getRecipesFromGoogle(newSearch);
 
-    if(searchTerm)
+    if(searchTerm) //new search
     {
       commit(UPDATE_RESULT_TOTAL, totalResults);
     }
@@ -132,10 +134,19 @@ const actions = {
     commit(UPDATE_SEARCH, updatedSearch);
 
     //add recipes with unique urls
-    recipes.map(r => {
-      if(state.recipes.find(function(value){return value.url === r.url}) === undefined)
-        commit(ADD_RECIPE, r);
-    })
+    recipes.map(async r => {
+      if(r!= undefined)
+      { 
+        let savedRecipe = state.recipes.find(function(value){return value.url === r.url}) 
+        if(savedRecipe === undefined)
+          commit(ADD_RECIPE, r);
+        else if(savedRecipe.favorite)
+        {
+          //update recipe with new data
+          await dispatch("updateSavedRecipeData", r);
+        }
+      }
+    });
   },
   async setSignedInUserAction({commit}, googleUser)
   {
@@ -164,11 +175,29 @@ const actions = {
     commit(SELECT_RECIPE, undefined);
 
     //add recipes with unique urls
-    response.data.map(r => {
-      r.favorite = true;
-      if(state.recipes.find(function(value){return value.url === r.url}) === undefined)
-        commit(ADD_RECIPE, r);
-    })
+    if(response.status === 200)
+      response.data.map(r => {
+        if(r!= undefined && state.recipes.find(function(value){return value.url === r.url}) === undefined)
+        {
+          r.favorite = true;
+          commit(ADD_RECIPE, r);
+        }
+      });
+  },
+  /**
+   * Called when user is searching google to include their saved recipes at the top
+   */
+  async searchUserRecipes({commit, state}, searchTerms)
+  {
+    const response = await dataService.searchSavedRecipes(state.googleUser, searchTerms);
+
+    //add recipes with unique urls
+    if(response.status === 200)
+      response.data.map(r => {
+        r.favorite = true;
+        if(state.recipes.find(function(value){return value.url === r.url}) === undefined)
+          commit(ADD_RECIPE, r);
+      });
   },
   /**
    * Called when user clicks favorite icon. Togggles saving/removing recipe from user cookbook
@@ -177,20 +206,20 @@ const actions = {
    */
   async toggleRecipeFavorite({commit, state}, recipe)
   {
-    commit(SET_RECIPE_FAVORITE, {url: recipe.url, favorite: !recipe.favorite});
     let response;
-    if(recipe.favorite)
+    if(!recipe.favorite)
       response = await dataService.addSavedRecipe(state.googleUser, recipe);
     else
     {
       response = await dataService.deleteSavedRecipe(state.googleUser, recipe);
       
-      if(state.myRecipes)
+      if(state.myRecipes && response.status === 200)
       {
         commit(REMOVE_RECIPE, recipe)
       }
     }
-    return response;
+    if(response.status === 200)
+      commit(SET_RECIPE_FAVORITE, {url: recipe.url, favorite: !recipe.favorite});
   },
   /**
    * Adds the recipe url to the saved recipes
@@ -204,10 +233,10 @@ const actions = {
       await dataService.addSavedRecipe(state.googleUser, recipe);
 
       //imediately run update logic for new recipe
-      await dispatch("updateSavedRecipe", url);
+      await dispatch("updateSavedRecipeFromUrl", url);
   },
 
-  async updateSavedRecipe({commit, state}, url)
+  async updateSavedRecipeFromUrl({commit, state}, url)
   {
     //search google by recipe
     const recipe = await dataService.getRecipeFromGoogle(url);
@@ -216,6 +245,15 @@ const actions = {
     commit(SET_RECIPE_FAVORITE, {url: recipe.url, favorite: true});
     //send recipe to API as POST
     await dataService.updateSavedRecipe(state.googleUser, url, recipe);
+  },
+
+  async updateSavedRecipeData({commit, state}, recipe)
+  {
+    //commmit recipe to list of recipes in state
+    commit(UPDATE_RECIPE, {url: recipe.url, recipe: recipe});
+    commit(SET_RECIPE_FAVORITE, {url: recipe.url, favorite: true});
+    //send recipe to API as POST
+    await dataService.updateSavedRecipe(state.googleUser, recipe.url, recipe);
   }
 };
 
