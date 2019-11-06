@@ -77,11 +77,14 @@ const getRecipeFromGoogle = async function(url) {
  */
 const getSavedRecipes = async function(googleUser)
 {
-  const response = await axios.get(COOKBOOK_API_URL + '/api/Recipes', {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}}).catch((err) => {
-    //must catch for vue to continue execution
-    return err.response;
-  });
-  return response;
+  if(googleUser)
+  {
+    const response = await axios.get(COOKBOOK_API_URL + '/api/Recipes', {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}}).catch((err) => {
+      //must catch for vue to continue execution
+      return err.response;
+    });
+    return response;
+  }
 }
 
 /**
@@ -91,11 +94,14 @@ const getSavedRecipes = async function(googleUser)
  */
 const addSavedRecipe = async function(googleUser, recipe)
 {
-  const response = await axios.put(COOKBOOK_API_URL + '/api/Recipes', recipe, {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}}).catch((err) => {
-    //must catch for vue to continue execution
-    return err.response;
-  });
-  return response;
+  if(googleUser)
+  {
+    const response = await axios.put(COOKBOOK_API_URL + '/api/Recipes', recipe, {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}}).catch((err) => {
+      //must catch for vue to continue execution
+      return err.response;
+    });
+    return response;
+  }
 }
 
 /**
@@ -105,11 +111,14 @@ const addSavedRecipe = async function(googleUser, recipe)
  */
 const updateSavedRecipe = async function(googleUser, url, recipe)
 {
-  const response = await axios.post(COOKBOOK_API_URL + `/api/Recipes?url=${url}`, recipe, {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}}).catch((err) => {
-    //must catch for vue to continue execution
-    return err.response;
-  });
-  return response;
+  if(googleUser)
+  {
+    const response = await axios.post(COOKBOOK_API_URL + `/api/Recipes?url=${url}`, recipe, {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}}).catch((err) => {
+      //must catch for vue to continue execution
+      return err.response;
+    });
+    return response;
+  }
 }
 
 /**
@@ -119,11 +128,14 @@ const updateSavedRecipe = async function(googleUser, url, recipe)
  */
 const deleteSavedRecipe = async function(googleUser, recipe)
 {
-  const response = await axios.delete(COOKBOOK_API_URL + `/api/Recipes?url=${recipe.url}`, {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}}).catch((err) => {
-    //must catch for vue to continue execution
-    return err.response;
-  });
-  return response;
+  if(googleUser)
+  {
+    const response = await axios.delete(COOKBOOK_API_URL + `/api/Recipes?url=${recipe.url}`, {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}}).catch((err) => {
+      //must catch for vue to continue execution
+      return err.response;
+    });
+    return response;
+  }
 }
 
 /**
@@ -133,11 +145,14 @@ const deleteSavedRecipe = async function(googleUser, recipe)
  */
 const searchSavedRecipes = async function(googleUser, searchTerms)
 {
-  const response = await axios.get(COOKBOOK_API_URL + `/api/Recipes/Search?searchTerms=${searchTerms}`, {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}}).catch((err) => {
-    //must catch for vue to continue execution
-    return err.response;
-  });
-  return response;
+  if(googleUser)
+  {
+    const response = await axios.get(COOKBOOK_API_URL + `/api/Recipes/Search?searchTerms=${searchTerms}`, {headers: {Authorization: `Bearer ${googleUser.getAuthResponse().id_token}`}}).catch((err) => {
+      //must catch for vue to continue execution
+      return err.response;
+    });
+    return response;
+  }
 }
 
 /**

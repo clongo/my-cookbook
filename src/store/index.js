@@ -165,10 +165,25 @@ const actions = {
    * @param {Object} param0 Vuex helpers
    * @param {Object} googleUser The google user object
    */
-  async setSignedInUserAction({commit}, googleUser)
+  async setSignedInUserAction({state, commit}, googleUser)
   {
     //save the google user
     commit(SET_USER, googleUser);
+
+    if(!googleUser)
+    {
+      if(state.myRecipes)
+      {
+        commit(CLEAR_RECIPES);
+        commit(SET_MY_RECIPES, false);
+      }
+
+      else {
+        state.recipes.map(r => {
+          commit(SET_RECIPE_FAVORITE, {url: r.url, favorite: false});
+        });
+      }
+    }
   },
   /**
    * Loads all the recipes for the logged in user

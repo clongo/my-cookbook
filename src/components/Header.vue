@@ -63,7 +63,10 @@ export default {
                     //   this.$gAuth.GoogleAuth.currentUser.get().getAuthResponse()
                     // );
                     this.setSignedInUserAction(GoogleUser);
-                    this.getUserRecipes();
+                    
+                    if(this.search === "")
+                        this.getUserRecipes();
+
                     this.isSignIn = this.$gAuth.isAuthorized;
                 })
                 .catch(error => {
@@ -93,7 +96,8 @@ export default {
         that.isSignIn = that.$gAuth.isAuthorized;
         if(that.isSignIn) {
             that.setSignedInUserAction(that.$gAuth.GoogleAuth.currentUser.get());
-            that.getUserRecipes();
+            if(that.search === "")
+                that.getUserRecipes();
         }
         if (that.isInit) 
             clearInterval(checkGauthLoad);
