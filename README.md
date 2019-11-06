@@ -1,6 +1,8 @@
 # my-cookbook2
 Client app for the My Cookbook Web site. Works in conjunction with my-cookbook-api as the backend for saving recipes to users.
 
+The backend API should run at https://localhost:5001/ from the local machine. If the not, update `COOKBOOK_API_URL` in src/shared/config.js 
+
 ## Frameworks
 •	Vue.js and Vuex
 •	Axios - For sending API requests
