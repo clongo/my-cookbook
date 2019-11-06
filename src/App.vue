@@ -61,7 +61,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 80px;
+  margin-top: 100px;
 }
 @media only screen and (max-width: 945px) {
   .mobile-overlay.col {

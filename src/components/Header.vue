@@ -1,7 +1,7 @@
 <template>
-<b-navbar variant="info" type="dark" toggleable="lg" fixed="top">
+<b-navbar variant="info" type="dark"  fixed="top">
+        <b-navbar-brand><img src="@/assets/Brand.png" alt="My Cookbook" height="60"/></b-navbar-brand>
     <b-input-group>
-        <b-navbar-brand>My Cookbook</b-navbar-brand>
         <b-form-input placeholder="Search" v-model="search" @keydown.enter="doSearch"></b-form-input>
         <b-input-group-append>
             <b-button @click="doSearch" variant="secondary">Search</b-button>
